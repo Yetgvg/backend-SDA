@@ -4,3 +4,4 @@ export { default as NotificacaoController } from './notificacaoController';
 export { default as BackupController } from './backupController';
 export { default as ExportacaoController } from './exportacaoController';
 export { default as UsuarioController } from './usuarioController';
+export { default as LoginController } from './loginController';

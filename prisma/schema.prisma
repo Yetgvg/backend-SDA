@@ -19,6 +19,7 @@ model Usuario {
   consentimentos   HistoricoConsentimento[]
   notificacoes     Notificacao[]
   exportacoes      Exportacao[]
+  role             Role      @default(USER)
 }
 
 model Termo {
@@ -71,4 +72,12 @@ model Exportacao {
   usuario Usuario @relation(fields: [id_usuario], references: [id])
 
   @@index([id_usuario])
+}
+
+enum Role {
+  ADMIN
+  RH
+  TI
+  FUNCIONARIO
+  USER
 }
