@@ -4,12 +4,17 @@ import usuarioService from '../services/usuarioService';
 class UsuarioController {
   async criar(req: Request, res: Response) {
     try {
-      const { nome, email, senha, telefone, role } = req.body;
-      const usuario = await usuarioService.criar(nome, email, senha, telefone, role);
+      const { nome, email, senha, telefone, cpf, role  } = req.body;
+      const usuario = await usuarioService.criar(nome, email, senha, telefone, cpf, role);
       res.status(201).json(usuario);
     } catch (error) {
-      console.error(error);
-      res.status(400).json({ error: "Não foi possível criar um novo usuário" });
+      if (error instanceof Error) {
+        console.error(error);
+        res.status(400).json({ error: error.message });
+      } else {
+        // Caso o erro não seja uma instância de Error
+        res.status(500).json({ error: 'Erro desconhecido.' });
+      }
     }
   }
 

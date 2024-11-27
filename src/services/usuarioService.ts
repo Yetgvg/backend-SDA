@@ -1,32 +1,44 @@
 import { PrismaClient, Role, Usuario } from '@prisma/client';
 import { encryptAES, decryptAES } from '../utils/crypto';
 import bcrypt from 'bcryptjs';
+import { validateCPF } from '../utils/cpfValidator';
 
 const prisma = new PrismaClient();
 
 class UsuarioService {
-  async criar(nome: string, email: string, senha: string, telefone: string | null, role: Role) {
-    const emailExistente = await prisma.usuario.findUnique({ where: { email } });
-
-    if (emailExistente) {
-      throw new Error('Essa conta de e-mail já foi cadastrada, por favor, digite outra.');
+    async criar(nome: string, email: string, senha: string, telefone: string | null, cpf: string, role: Role) {
+        if (!validateCPF(cpf)) {
+          throw new Error('O CPF informado é inválido.');
+        }
+    
+        const cpfExistente = await prisma.usuario.findUnique({ where: { cpf } });
+    
+        if (cpfExistente) {
+          throw new Error('Esse CPF já está cadastrado.');
+        }
+    
+        const emailExistente = await prisma.usuario.findUnique({ where: { email } });
+    
+        if (emailExistente) {
+          throw new Error('Essa conta de e-mail já foi cadastrada, por favor, digite outra.');
+        }
+    
+        // Validação de senha
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\|`~-]).{12,}$/;
+    
+        if (!regex.test(senha)) {
+          throw new Error('A senha deve ter pelo menos 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.');
+        }
+    
+        const senhaCriptografada = encryptAES(senha);
+        const telefoneCriptografado = telefone ? encryptAES(telefone) : null;
+    
+        const usuario = await prisma.usuario.create({
+          data: { nome, email, senha: senhaCriptografada, telefone: telefoneCriptografado, cpf, role },
+        });
+    
+        return usuario;
     }
-
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}\[\]:;"'<>,.?\/\\|`~-]).{12,}$/;
-
-    if (!regex.test(senha)) {
-      throw new Error('A senha deve ter pelo menos 12 caracteres, incluindo letras maiúsculas, minúsculas, números e caracteres especiais.');
-    }
-
-    const senhaCriptografada = encryptAES(senha);
-    const telefoneCriptografado = telefone ? encryptAES(telefone) : null;
-
-    const usuario = await prisma.usuario.create({
-      data: { nome, email, senha: senhaCriptografada, telefone: telefoneCriptografado, role },
-    });
-
-    return usuario;
-  }
 
   async listarTodos() {
     const usuarios = await prisma.usuario.findMany();

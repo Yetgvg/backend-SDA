@@ -19,6 +19,7 @@ model Usuario {
   consentimentos   HistoricoConsentimento[]
   notificacoes     Notificacao[]
   exportacoes      Exportacao[]
+  cpf              String    @unique
   role             Role      @default(USER)
 }
 
