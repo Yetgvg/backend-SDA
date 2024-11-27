@@ -12,7 +12,7 @@ model Usuario {
   nome             String    @db.VarChar(255)
   email            String    @unique @db.VarChar(255)
   senha            String    @db.VarChar(512)
-  telefone         String?   @db.VarChar(15)
+  telefone         String?   
   esquecido        Boolean   @default(false)
   data_criacao     DateTime  @default(now())
   data_atualizacao DateTime  @updatedAt
