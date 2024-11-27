@@ -3,9 +3,9 @@ import { BackupController } from '../controllers';
 
 const router = Router();
 
-router.post('/', BackupController.criar);
-router.get('/', BackupController.listar);
-router.get('/:id', BackupController.obterPorId);
-router.delete('/:id', BackupController.excluir);
+router.post('/criar', BackupController.criar);
+router.get('/listar', BackupController.listar);
+router.get('/listar/:id', BackupController.obterPorId);
+router.delete('/deletar/:id', BackupController.excluir);
 
 export default router;
