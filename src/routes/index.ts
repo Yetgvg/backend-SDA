@@ -1,9 +1,10 @@
-import { Router, Request, Response } from "express";
-import TermoRoutes from './termoRoutes'; // Certifique-se de importar o router configurado corretamente
+import { Router } from "express";
+import TermoRoutes from './termoRoutes'; 
+import HistoricoConsentimentoRoutes from './historicoConsentimentoRoutes';
 
 const router = Router();
 
-// Aqui você vincula o grupo de rotas '/termo' ao router
-router.use("/termo", TermoRoutes);  // Passa as rotas configuradas para o Express
+router.use("/termo", TermoRoutes); 
+router.use("/historicoConsentimento", HistoricoConsentimentoRoutes); 
 
 export default router;
