@@ -60,7 +60,8 @@ model Notificacao {
 
 model Backup {
   id          String   @id @default(uuid()) @db.Char(36)
-  arquivo     String   @db.VarChar(255)
+  nome        String   @db.VarChar(255)
+  arquivo     String   @db.Text // Para armazenar backups criptografados
   data_backup DateTime @default(now())
 }
 
