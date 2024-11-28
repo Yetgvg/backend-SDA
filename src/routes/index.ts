@@ -14,7 +14,7 @@ router.use("/historicoConsentimento", HistoricoConsentimentoRoutes);
 router.use("/notificacao", NotificacaoRoutes); 
 router.use("/backup", BackupRoutes); 
 router.use("/exportacao", ExportacaoRoutes); 
-router.use("/termo", TermoRoutes);  // Passa as rotas configuradas para o Express
+router.use("/termo", TermoRoutes); 
 router.use("/usuarios", UsuarioRoutes)
 router.use("/auth", LoginRoutes)
 

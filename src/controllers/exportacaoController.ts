@@ -44,6 +44,25 @@ class ExportacaoController {
       res.status(500).json({ message: 'Erro ao excluir exportação', error });
     }
   }
+
+  async exportarPDF(req: Request, res: Response) {
+    const { id_usuario } = req.params;
+  
+    try {
+      const pdfBuffer = await ExportacaoService.gerarPDF(id_usuario);
+  
+      const formato = 'PDF';
+      await ExportacaoService.criarExportacao(id_usuario, formato);
+  
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="dados_portabilidade.pdf"');
+      res.send(pdfBuffer);
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Erro ao exportar PDF', error });
+    }
+  }
 }
 
 export default new ExportacaoController();
