@@ -6,7 +6,7 @@ import { authorize } from '../middlewares/roleMiddleware';
 
 const router = Router();
 
-router.post('/criar',  authenticate, authorize(['ADMIN', 'RH', 'TI']), UsuarioController.criar);
+router.post('/criar', UsuarioController.criar);
 // router.get('/listar', authenticate, authorize(['admin', 'rh']), UsuarioController.listarUsuario);
 router.get('/listar', authenticate, authorize(['ADMIN', 'RH', 'TI']), UsuarioController.listarTodos);
 router.get('/listarAtivos',  authenticate, authorize(['ADMIN', 'RH', 'TI']), UsuarioController.listarTodosAtivos);

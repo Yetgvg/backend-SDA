@@ -8,5 +8,7 @@ router.get('/listar', NotificacaoController.listar);
 router.get('/listar/:id', NotificacaoController.obterPorId);
 router.put('/atualizar/:id', NotificacaoController.atualizar);
 router.delete('/deletar/:id', NotificacaoController.excluir);
+router.post('/automatica', NotificacaoController.criarAutomatica);
+
 
 export default router;
