@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "axios": "^1.7.8",
     "bcryptjs": "^2.4.3",
     "cls-hooked": "^4.2.2",
     "crypto": "^1.0.1",

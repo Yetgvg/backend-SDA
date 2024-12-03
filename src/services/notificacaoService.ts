@@ -45,7 +45,7 @@ class NotificacaoService {
     const mensagensPredefinidas: Record<string, string> = {
       "DADOS_ALTERADOS": "Seus dados pessoais foram alterados com sucesso. Se não foi você acesse imediatamente sua conta.",
       "DADOS_ACESSO_NAO_AUTORIZADO": "Detectamos um acesso não autorizado aos seus dados pessoais. Revise suas informações.",
-      "INCIDENTE_SEGURANCA": "Um incidente de segurança foi identificado e pode ter afetado seus dados pessoais. Estamos investigando.",
+      "INCIDENTE_SEGURANCA": "Informamos que identificamos um incidente de segurança envolvendo seus dados pessoais armazenados em nossa plataforma. Embora as medidas de segurança aplicadas sejam rigorosas, foi constatada a possibilidade de acesso não autorizado aos seus dados. Temos o compromisso de notificar você imediatamente e orientar quanto a alteração da senha. Estamos reforçando nossas medidas de segurança para evitar que situações semelhantes ocorram novamente.",
     };
 
     const mensagem = mensagensPredefinidas[evento] || "Uma ação foi registrada em relação aos seus dados pessoais.";
