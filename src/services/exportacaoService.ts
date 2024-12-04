@@ -99,6 +99,50 @@ class ExportacaoService {
       });
     });
   }
+
+  async listarUsuario(email: string, senha: string) {
+    // Buscar o usuário pelo email
+    const usuario = await prisma.usuario.findUnique({
+      where: { email },
+      include: {
+        consentimentos: true,
+        notificacoes: true,
+        exportacoes: true,
+      },
+    });
+
+    if (!usuario) {
+      throw new Error('Usuário não encontrado');
+    }
+
+    if (usuario.esquecido) {
+      throw new Error('Este usuário não tem mais acesso às informações');
+    }
+
+    // Descriptografar a senha armazenada no banco de dados
+    const senhaCriptografada = decryptAES(usuario.senha);
+
+    // Comparar a senha informada com a senha descriptografada
+    if (senha !== senhaCriptografada) {
+      throw new Error('Senha incorreta');
+    }
+
+    // Descriptografar dados sensíveis, como telefone
+    const telefone = usuario.telefone ? decryptAES(usuario.telefone) : null;
+
+    // Retornar os dados completos do usuário
+    return {
+      id: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+      telefone,
+      cpf: usuario.cpf,
+      esquecido: usuario.esquecido,
+      data_criacao: usuario.data_criacao,
+      data_atualizacao: usuario.data_atualizacao,
+      senha: usuario.senha
+    };
+  }
 }
 
 export default new ExportacaoService();

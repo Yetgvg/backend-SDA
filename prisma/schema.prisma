@@ -16,9 +16,9 @@ model Usuario {
   esquecido        Boolean   @default(false)
   data_criacao     DateTime  @default(now())
   data_atualizacao DateTime  @updatedAt
-  consentimentos   HistoricoConsentimento[] // Removido onDelete aqui
-  notificacoes     Notificacao[] // Removido onDelete aqui
-  exportacoes      Exportacao[] // Removido onDelete aqui
+  consentimentos   HistoricoConsentimento[] 
+  notificacoes     Notificacao[] 
+  exportacoes      Exportacao[] 
   cpf              String    @unique
   role             Role      @default(USER)
 }
@@ -29,7 +29,7 @@ model Termo {
   itens_obrigatorios Json     // Alterado para Json
   itens_opcionais    Json     // Alterado para Json
   data_criacao      DateTime @default(now())
-  consentimentos    HistoricoConsentimento[] // Removido onDelete aqui
+  consentimentos    HistoricoConsentimento[] 
 }
 
 model HistoricoConsentimento {
@@ -39,8 +39,8 @@ model HistoricoConsentimento {
   aceito             Boolean
   data_consentimento DateTime @default(now())
 
-  usuario Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade) // onDelete aqui
-  termo   Termo   @relation(fields: [id_termo], references: [id], onDelete: Cascade) // onDelete aqui
+  usuario Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade) 
+  termo   Termo   @relation(fields: [id_termo], references: [id], onDelete: Cascade) 
 
   @@index([id_usuario])
   @@index([id_termo])
@@ -53,7 +53,7 @@ model Notificacao {
   lida        Boolean  @default(false)
   data_envio  DateTime @default(now())
 
-  usuario Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade) // onDelete aqui
+  usuario Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade) 
 
   @@index([id_usuario])
 }
@@ -70,7 +70,7 @@ model Exportacao {
   formato         String   @db.VarChar(50)
   data_exportacao DateTime @default(now())
 
-  usuario Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade) // onDelete aqui
+  usuario Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade) 
 
   @@index([id_usuario])
 }

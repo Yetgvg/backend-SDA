@@ -24,6 +24,26 @@ class BlacklistController {
       res.status(500).json({ message: 'Erro ao listar usuários esquecidos', error });
     }
   }
+
+  async importarUsuario(req: Request, res: Response) {
+    try {
+      const { email, senha } = req.body;
+
+      if (!email || !senha) {
+        res.status(400).json({ error: 'Email e senha são obrigatórios.' });
+      }
+
+      const usuarioCriado = await EsquecerService.importarUsuario(email, senha);
+
+      res.status(201).json({
+        message: 'Usuário importado com sucesso.',
+        usuario: usuarioCriado,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json();
+    }
+  }
 }
 
 export default new BlacklistController();

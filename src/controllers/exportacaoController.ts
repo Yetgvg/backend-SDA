@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
 import ExportacaoService from '../services/exportacaoService';
+import { decryptAES } from '../utils/crypto';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 class ExportacaoController {
   async criar(req: Request, res: Response) {
@@ -61,6 +65,22 @@ class ExportacaoController {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Erro ao exportar PDF', error });
+    }
+  }
+
+  async listarUsuario(req: Request, res: Response) {
+    try {
+      const { email, senha } = req.body;
+
+      if (!email || !senha) {
+        res.status(400).json({ error: 'Email e senha são obrigatórios' });
+      }
+
+      const usuario = await ExportacaoService.listarUsuario(email, senha);
+      res.status(200).json(usuario);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json();
     }
   }
 }
