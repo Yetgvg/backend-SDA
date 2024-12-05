@@ -1,8 +1,14 @@
+import { exec } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import { promisify } from 'util';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+const execAsync = promisify(exec);
 
 class BackupService {
+
   async criarBackup(arquivo: string) {
     const backup = await prisma.backup.create({
       data: {
@@ -10,6 +16,32 @@ class BackupService {
       },
     });
     return backup;
+  }
+
+  async criarRotinaBackup() {
+    const timestamp = new Date().toISOString();
+    const backupFileName = `backup-${timestamp}.sql`;
+    const backupFilePath = path.join(__dirname, '../../', 'backups', backupFileName);
+
+    try {
+      // Rodar o comando do MySQL Dump
+      await execAsync(`mysqldump -u user -p'password' database_name > ${backupFilePath}`);
+
+      // Ler o backup
+      const backup = fs.readFileSync(backupFilePath, 'utf8');
+
+      // Salvar o backup
+      await prisma.backup.create({
+        data: {
+          arquivo: backup,
+        },
+      });
+
+      console.log(`Backup criado e armazenado com sucesso: ${backupFileName}`);
+    } catch (error) {
+      console.error('Erro ao criar backup:', error);
+      throw error; 
+    }
   }
 
   async listarBackups() {
