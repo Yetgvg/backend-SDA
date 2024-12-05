@@ -20,7 +20,7 @@ class EsquecerService {
   async importarUsuario(email: string, senha: string) {
     try {
       // Enviar a requisição para o backend primário
-      const resposta = await axios.post('http://localhost:3000/exportacao/portabilidade', {
+      const resposta = await axios.post('http://localhost:3002/exportacao/portabilidade', {
         email,
         senha,
       });

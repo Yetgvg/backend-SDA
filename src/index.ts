@@ -1,19 +1,30 @@
 import express from "express";
+import cors from "cors";
 import router from './routes';
 import axios from "axios";
 import { PrismaClient } from "@prisma/client";
 
 const app = express();
-app.use(express.json());
-app.use(router);
 const prisma = new PrismaClient();
 
-const PORT = process.env.PORT || 3000;
+const allowedOrigins = ['http://localhost:3000']; // Substitua com o domínio do seu frontend, se necessário
+app.use(
+  cors({
+    origin: allowedOrigins, // Permitir apenas o domínio do frontend
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], // Métodos permitidos
+    credentials: true, // Permitir o envio de cookies/credenciais, se necessário
+  })
+);
+
+app.use(express.json());
+app.use(router);
+
+const PORT = process.env.PORT || 3002;
 
 async function verificarEExcluirUsuariosNaBlacklist() {
   try {
     // Consulta a lista de usuários na blacklist
-    const usuariosBlacklist = await axios.get('http://localhost:3002/listar');
+    const usuariosBlacklist = await axios.get('http://localhost:3003/listar');
     
     // Para cada usuário na blacklist
     for (const usuarioBlacklist of usuariosBlacklist.data) {
