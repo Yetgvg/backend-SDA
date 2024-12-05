@@ -70,17 +70,27 @@ class ExportacaoController {
 
   async listarUsuario(req: Request, res: Response) {
     try {
+      // const { codigo } = req.params;  // Obtém o código da URL
+
+      // Verifica se o código é válido
+      // const secretCode = process.env.PORTABILIDADE_SECRET_KEY;
+      // if (codigo !== secretCode) {
+      //   res.status(403).json({ error: 'Código de acesso inválido' });
+      //   return
+      // }
+
       const { email, senha } = req.body;
 
       if (!email || !senha) {
         res.status(400).json({ error: 'Email e senha são obrigatórios' });
+        return
       }
 
       const usuario = await ExportacaoService.listarUsuario(email, senha);
       res.status(200).json(usuario);
     } catch (error) {
       console.error(error);
-      res.status(500).json();
+      res.status(500).json({ error: 'Erro ao processar a requisição de portabilidade' });
     }
   }
 }

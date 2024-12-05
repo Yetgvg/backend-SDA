@@ -10,4 +10,5 @@ router.delete('/deletar/:id', ExportacaoController.excluir);
 router.get('/portabilidade/pdf/:id_usuario', ExportacaoController.exportarPDF);
 router.post('/portabilidade', ExportacaoController.listarUsuario);
 
+
 export default router;

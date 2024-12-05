@@ -19,30 +19,37 @@ class EsquecerService {
 
   async importarUsuario(email: string, senha: string) {
     try {
+      // Obtenha o código secreto do .env
+      // const codigo = process.env.SECRET_CODE; 
+      // if (!codigo) {
+      //   throw new Error('Código secreto não encontrado no ambiente.');
+      // }
+  
       // Enviar a requisição para o backend primário
-      const resposta = await axios.post('http://localhost:3002/exportacao/portabilidade', {
+      const resposta = await axios.post(`http://localhost:3002/exportacao/portabilidade`, {
         email,
         senha,
       });
-      console.log(resposta.data)
+      console.log(resposta.data);
       
       const dadosUsuario = resposta.data;
-
+  
       if (!dadosUsuario) {
         throw new Error('Não foi possível obter os dados do usuário do backend primário.');
       }
-
+  
       // Verificar se o usuário já existe no banco secundário
       const usuarioExistente = await prisma.usuario.findFirst({
         where: {
           OR: [{ email: dadosUsuario.email }, { cpf: dadosUsuario.cpf }],
         },
       });
-
+  
       if (usuarioExistente) {
-        throw new Error('Usuário já existe no sistema secundário.');
+        // Alterado para retornar uma resposta mais informativa
+        return { message: 'Usuário já existe no sistema secundário.' };
       }
-
+  
       // Criar o novo usuário no banco secundário
       const usuarioCriado = await prisma.usuario.create({
         data: {
@@ -56,11 +63,12 @@ class EsquecerService {
           data_atualizacao: dadosUsuario.data_atualizacao,
         },
       });
-
+  
       return usuarioCriado;
     } catch (error) {
-      console.error('Erro ao importar usuário:');
-      throw new Error('Erro ao realizar a portabilidade do usuário.');
+      console.error('Erro ao importar usuário:', error);
+      // Retornar um erro mais claro, sem usar throw
+      return { error: 'Erro ao realizar a portabilidade do usuário.', details: error };
     }
   }
 }

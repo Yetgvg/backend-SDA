@@ -20,6 +20,7 @@ app.use(
 app.post('/esquecer', esquecerController.criar);
 app.get('/listar', esquecerController.listar);
 app.post('/importar', esquecerController.importarUsuario);
+// app.post('/importar/:codigo', esquecerController.importarUsuario);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
