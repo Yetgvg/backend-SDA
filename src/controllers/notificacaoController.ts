@@ -57,9 +57,9 @@ class NotificacaoController {
   }
 
   async criarAutomatica(req: Request, res: Response) {
-    const { id_usuario, evento } = req.body;
+    const {  evento } = req.body;
     try {
-      const notificacao = await NotificacaoService.criarNotificacaoAutomatica(id_usuario, evento);
+      const notificacao = await NotificacaoService.criarNotificacaoAutomatica( evento);
       res.status(201).json(notificacao);
     } catch (error) {
       res.status(500).json({ message: 'Erro ao criar notificação automática', error });

@@ -37,6 +37,7 @@ model HistoricoConsentimento {
   id_usuario         String   @db.Char(36)
   id_termo           String   @db.Char(36)
   aceito             Boolean
+  confirmado         Boolean  @default(false)
   data_consentimento DateTime @default(now())
 
   usuario Usuario @relation(fields: [id_usuario], references: [id], onDelete: Cascade) 

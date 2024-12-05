@@ -41,36 +41,60 @@ class NotificacaoService {
     return notificacaoExcluida;
   }
 
-  async criarNotificacaoAutomatica(id_usuario: string, evento: string) {
+  async criarNotificacaoAutomatica(evento: string) {
+    // Definindo as mensagens predefinidas com base no tipo de evento
     const mensagensPredefinidas: Record<string, string> = {
-      "DADOS_ALTERADOS": "Seus dados pessoais foram alterados com sucesso. Se não foi você acesse imediatamente sua conta.",
-      "DADOS_ACESSO_NAO_AUTORIZADO": "Detectamos um acesso não autorizado aos seus dados pessoais. Revise suas informações.",
-      "INCIDENTE_SEGURANCA": "Informamos que identificamos um incidente de segurança envolvendo seus dados pessoais armazenados em nossa plataforma. Embora as medidas de segurança aplicadas sejam rigorosas, foi constatada a possibilidade de acesso não autorizado aos seus dados. Temos o compromisso de notificar você imediatamente e orientar quanto a alteração da senha. Estamos reforçando nossas medidas de segurança para evitar que situações semelhantes ocorram novamente.",
+      "DADOS_ALTERADOS":
+        "Seus dados pessoais foram alterados com sucesso.\n" +
+        "Se não foi você, acesse imediatamente sua conta.",
+      "DADOS_ACESSO_NAO_AUTORIZADO":
+        "Detectamos um acesso não autorizado aos seus dados pessoais.\n" +
+        "Revise suas informações.",
+      "INCIDENTE_SEGURANCA":
+        "Informamos que identificamos um incidente de segurança envolvendo seus dados pessoais armazenados em nossa plataforma.\n" +
+        "Embora as medidas de segurança aplicadas sejam rigorosas, foi constatada a possibilidade de acesso não autorizado aos seus dados.\n" +
+        "Temos o compromisso de notificar você imediatamente e orientar quanto à alteração da senha.\n" +
+        "Estamos reforçando nossas medidas de segurança para evitar que situações semelhantes ocorram novamente.",
     };
 
+    // Mensagem padrão se o evento não for reconhecido
     const mensagem = mensagensPredefinidas[evento] || "Uma ação foi registrada em relação aos seus dados pessoais.";
 
-    const notificacao = await prisma.notificacao.create({
-      data: {
-        id_usuario,
-        mensagem,
-      },
+    // Buscar todos os usuários ativos
+    const usuarios = await prisma.usuario.findMany({
+      select: { id: true, email: true },
     });
 
-    const usuario = await prisma.usuario.findUnique({
-      where: { id: id_usuario },
-      select: { email: true },
-    });
-
-    if (!usuario || !usuario.email) {
-      throw new Error('Usuário não encontrado ou sem e-mail associado.');
+    if (!usuarios || usuarios.length === 0) {
+      throw new Error("Nenhum usuário encontrado para envio de notificações.");
     }
 
-    const assunto = "Notificação sobre seus dados pessoais";
-    await emailService.enviarEmail(usuario.email, assunto, mensagem);
+    // Criar notificações e enviar e-mails
+    const notificacoesPromises = usuarios.map(async (usuario) => {
+      // Criar notificação no banco de dados
+      await prisma.notificacao.create({
+        data: {
+          id_usuario: usuario.id,
+          mensagem,
+        },
+      });
 
-    return notificacao;
+      // Verificar se o e-mail do usuário está presente antes de enviar
+      if (usuario.email) {
+        const assunto = "Notificação sobre seus dados pessoais";
+        await emailService.enviarEmail(usuario.email, assunto, mensagem);
+      }
+    });
+
+    // Aguardar todas as operações de notificação serem concluídas
+    await Promise.all(notificacoesPromises);
+
+    return {
+      sucesso: true,
+      mensagem: `Notificações enviadas para ${usuarios.length} usuários.`,
+    };
   }
+
 }
 
 export default new NotificacaoService();

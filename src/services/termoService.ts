@@ -14,7 +14,12 @@ class TermoService {
   }
 
   async listarTermos(): Promise<Termo[]> {
-    return prisma.termo.findMany();
+    return prisma.termo.findMany({
+      orderBy: {
+        data_criacao: 'desc', // Ordena pela data mais recente
+      },
+      take: 1, // Retorna apenas o termo mais recente
+    });
   }
 
   async obterTermoPorId(id: string): Promise<Termo | null> {
@@ -45,6 +50,7 @@ class TermoService {
       },
     });
   }
+  
 }
 
 export default new TermoService();
